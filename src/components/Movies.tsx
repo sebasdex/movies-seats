@@ -1,5 +1,7 @@
 import { moviesData } from "../data/moviesData"
+import { useNavigate } from "react-router"
 function Movies() {
+    const navigate = useNavigate()
     return (
         <section className="flex flex-col items-center mb-20">
             <section className="text-black grid grid-cols-3 gap-4">
@@ -27,7 +29,7 @@ function Movies() {
                             {/* Texto al hacer hover */}
                             <div className="opacity-0 absolute inset-0 flex flex-col gap-4 items-center justify-center text-center transition-opacity duration-300 ease-in-out group-hover:opacity-100 p-4 hover:cursor-default">
                                 <p>{movie.description}</p>
-                                <button className="btn btn-outline btn-error">Reservar</button>
+                                <button type="button" className="btn btn-outline btn-error" onClick={() => navigate("/seats")}>Reservar</button>
                             </div>
                         </div>
                     </article>
