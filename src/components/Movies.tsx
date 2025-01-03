@@ -19,20 +19,18 @@ function Movies() {
                                 <h3 className="text-lg font-bold">{movie.name}</h3>
                                 <p className="font-semibold">{movie.genre}</p>
                                 <div className="flex justify-between font-semibold">
-                                    <p>{movie.showtimes.join(" | ")}</p>
+                                    {/* <p>{movie.showtimes.join(" | ")}</p> */}
                                     <p>{movie.duration}min</p>
                                     <p>{movie.rating}</p>
                                 </div>
                             </div>
                             {/* Texto al hacer hover */}
-                            <div className="opacity-0 absolute inset-0 flex flex-col gap-4 items-center justify-center text-center transition-opacity duration-300 ease-in-out group-hover:opacity-100 p-4">
+                            <div className="opacity-0 absolute inset-0 flex flex-col gap-4 items-center justify-center text-center transition-opacity duration-300 ease-in-out group-hover:opacity-100 p-4 hover:cursor-default">
                                 <p>{movie.description}</p>
                                 <button className="btn btn-outline btn-error">Reservar</button>
                             </div>
                         </div>
                     </article>
-
-
                 ))}
             </section>
         </section>
