@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.movie-screen, .movie-shadow {
+    width: 400px;
+    height: 150px;
+    background-color: #707070;
+    clip-path: polygon(0 0, 100% 0, 88% 39%, 11% 39%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.movie-shadow{
+    transform: rotate(180deg);
+    position: absolute;
+    bottom: 30px;
+    left: -4px;
+    background: linear-gradient(to top, rgba(107, 107, 107, 0.8), rgba(0, 0, 0, 0));
+}
+
