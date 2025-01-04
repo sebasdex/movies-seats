@@ -6,7 +6,7 @@ function Layout() {
     return (
         <>
             <Header />
-            <main className="container mx-auto mt-20 flex-1">
+            <main className="container mx-auto my-20">
                 <Outlet />
             </main>
             <Footer />

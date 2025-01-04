@@ -2,10 +2,10 @@ import { useNavigate } from "react-router"
 function SeatsCost() {
     const navigate = useNavigate()
     return (
-        <section className="flex flex-col absolute -top-64 left-50">
-            <article className="h-[30rem] w-80 bg-black">
+        <section className="flex flex-col min-w-80 md:-top-64 md:left-50">
+            <article className="w-80 bg-black mx-auto -mt-40">
                 <img src="https://moviepostermexico.com/cdn/shop/products/inception_ver2_xxlg_1024x1024@2x.jpg?v=1574870710"
-                    alt="movie" className="h-full w-full object-cover object-top" />
+                    alt="movie" className="h-full w-full object-cover object-top aspect-auto" />
             </article>
             <article className="my-8 flex flex-col gap-2 p-2">
                 <div className="flex items-center justify-between gap-4 p-2 border">

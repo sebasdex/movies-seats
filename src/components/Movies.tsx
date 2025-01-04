@@ -4,10 +4,10 @@ function Movies() {
     const navigate = useNavigate()
     return (
         <section className="flex flex-col items-center mb-20">
-            <section className="text-black grid grid-cols-3 gap-4">
+            <section className="text-black grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {moviesData.map((movie) => (
                     <article
-                        className="group h-72 w-72 overflow-hidden shadow-md shadow-black relative hover:scale-95 transition-transform duration-300 ease-in-out"
+                        className="group h-80 w-80 overflow-hidden shadow-md shadow-black relative hover:scale-95 transition-transform duration-300 ease-in-out"
                         key={movie.name}
                     >
                         <img
