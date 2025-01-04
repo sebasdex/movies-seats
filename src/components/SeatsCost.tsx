@@ -1,46 +1,80 @@
-import { useNavigate } from "react-router"
+import { useNavigate } from "react-router";
 function SeatsCost() {
-    const navigate = useNavigate()
-    return (
-        <section className="flex flex-col min-w-80 md:-top-64 md:left-50">
-            <article className="w-80 bg-black mx-auto -mt-40">
-                <img src="https://moviepostermexico.com/cdn/shop/products/inception_ver2_xxlg_1024x1024@2x.jpg?v=1574870710"
-                    alt="movie" className="h-full w-full object-cover object-top aspect-auto" />
-            </article>
-            <article className="my-8 flex flex-col gap-2 p-2">
-                <div className="flex items-center justify-between gap-4 p-2 border">
-                    <p className="flex-1">Asiento: A2</p>
-                    <p className="text-gray-400">$80</p>
-                    <button className="">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                    </button>
-                </div>
-                <div className="flex items-center justify-between gap-4 p-2 border">
-                    <p className="flex-1">Asiento: A2</p>
-                    <p className="text-gray-400">$80</p>
-                    <button className="">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                    </button>
-                </div>
-                <div className="flex items-center justify-between gap-4 p-2 border">
-                    <p className="flex-1">Asiento: A2</p>
-                    <p className="text-gray-400">$80</p>
-                    <button className="">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                    </button>
-                </div>
-                <div className="flex justify-end">
-                    <p className="p-2 text-white/30">Total:
-                        <span className="text-white ml-2 text-xl">$80</span>
-                    </p>
-                </div>
-                <div className="grid grid-cols-2 gap-2 mt-8">
-                    <button className="btn btn-outline btn-error" onClick={() => navigate("/")}>Cancelar</button>
-                    <button className="btn btn-outline btn-error">Reservar</button>
-                </div>
-            </article>
-        </section>
-    )
+  const navigate = useNavigate();
+  return (
+    <section className="flex flex-col min-w-80 md:-top-64 md:left-50">
+      <article className="w-80 bg-black mx-auto -mt-40">
+        <img
+          src="https://moviepostermexico.com/cdn/shop/products/inception_ver2_xxlg_1024x1024@2x.jpg?v=1574870710"
+          alt="movie"
+          className="h-full w-full object-cover object-top aspect-auto"
+        />
+      </article>
+      <article className="my-8 flex flex-col gap-2 p-2">
+        <p className="text-sm mb-2 text-white/70">
+          * Selecciona el horario de tu preferencia
+        </p>
+        <div className="space-y-2">
+          <div key={1}>
+            <input
+              type="radio"
+              id={"1"}
+              name="schedule"
+              value={1}
+              className="peer hidden"
+            />
+            <label
+              htmlFor={`1`}
+              className="flex items-center justify-between gap-4 p-2 border border-white/30 cursor-pointer transition-all 
+                   peer-checked:bg-red-700 peer-checked:text-white hover:bg-gray-600 hover:text-white"
+            >
+              <p>10:00</p>
+              <p>$80.00</p>
+            </label>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div key={2}>
+            <input
+              type="radio"
+              id={"2"}
+              name="schedule"
+              value={2}
+              className="peer hidden"
+            />
+            <label
+              htmlFor={`2`}
+              className="flex items-center justify-between gap-4 p-2 border border-white/30 cursor-pointer transition-all 
+                   peer-checked:bg-red-700 peer-checked:text-white hover:bg-gray-600 hover:text-white"
+            >
+              <p>14:00</p>
+              <p>$100.00</p>
+            </label>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-4 p-2 border border-white/30">
+          <p className="flex-1">Asiento(s)</p>
+          <p className="text-gray-400">Aún sin elegir</p>
+        </div>
+        <div className="flex justify-end">
+          <p className="p-2 text-white/30">
+            Total:
+            <span className="text-white ml-2 text-xl">$0.00</span>
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2 mt-8">
+          <button
+            className="btn btn-outline btn-error"
+            onClick={() => navigate("/")}
+          >
+            Cancelar
+          </button>
+          <button className="btn btn-outline btn-error">Reservar</button>
+        </div>
+      </article>
+    </section>
+  );
 }
 
-export default SeatsCost
+export default SeatsCost;
