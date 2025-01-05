@@ -1,10 +1,17 @@
 import { useNavigate, useParams } from "react-router";
 import { moviesData } from "../data/moviesData";
+import { theaters } from "../data/theaters";
 function SeatsCost() {
   const navigate = useNavigate();
   const { slugId } = useParams();
   const idMovie = parseInt(slugId?.split("-")[slugId.split("-").length - 1] || "0");
   const movieInfo = moviesData.find((movie) => movie.id === idMovie);
+  const theaterInfo = theaters
+    .filter(theater => theater.showTimes.some(showTime => showTime.movieId === idMovie))
+    .map(theater => ({
+      ...theater,
+      showTimes: theater.showTimes.filter(showTime => showTime.movieId === idMovie)
+    }));
   return (
     <section className="flex flex-col min-w-80 md:-top-64 md:left-50">
       <article className="w-80 bg-black mx-auto -mt-40">
@@ -19,42 +26,25 @@ function SeatsCost() {
           * Selecciona el horario de tu preferencia
         </p>
         <div className="space-y-2">
-          <div key={1}>
-            <input
-              type="radio"
-              id={"1"}
-              name="schedule"
-              value={1}
-              className="peer hidden"
-            />
-            <label
-              htmlFor={`1`}
-              className="flex items-center justify-between gap-4 p-2 border border-white/30 cursor-pointer transition-all 
-                   peer-checked:bg-red-700 peer-checked:text-white hover:bg-gray-600 hover:text-white"
-            >
-              <p>10:00</p>
-              <p>$80.00</p>
-            </label>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div key={2}>
-            <input
-              type="radio"
-              id={"2"}
-              name="schedule"
-              value={2}
-              className="peer hidden"
-            />
-            <label
-              htmlFor={`2`}
-              className="flex items-center justify-between gap-4 p-2 border border-white/30 cursor-pointer transition-all 
-                   peer-checked:bg-red-700 peer-checked:text-white hover:bg-gray-600 hover:text-white"
-            >
-              <p>14:00</p>
-              <p>$100.00</p>
-            </label>
-          </div>
+          {theaterInfo.map((theater) => (
+            <div key={theater.id}>
+              <input
+                type="radio"
+                id={`${theater.id}`}
+                name="schedule"
+                value={theater.id}
+                className="peer hidden"
+              />
+              <label
+                htmlFor={`${theater.id}`}
+                className="flex items-center justify-between gap-4 p-2 border border-white/30 cursor-pointer transition-all
+                     peer-checked:bg-red-700 peer-checked:text-white hover:bg-gray-600 hover:text-white"
+              >
+                <p>{theater.showTimes[0].time}</p>
+                <p>${theater.showTimes[0].price}</p>
+              </label>
+            </div>
+          ))}
         </div>
 
         <div className="flex items-center justify-between gap-4 p-2 border border-white/30">
