@@ -1,17 +1,13 @@
 import { useNavigate, useParams } from "react-router";
 import { moviesData } from "../data/moviesData";
-import { theaters } from "../data/theaters";
+import { useTheater } from "../hooks/useTheater";
 function SeatsCost() {
   const navigate = useNavigate();
   const { slugId } = useParams();
-  const idMovie = parseInt(slugId?.split("-")[slugId.split("-").length - 1] || "0");
+  const { theaterInfo, idMovieFunction } = useTheater();
+  const idMovie = idMovieFunction(slugId || "0");
   const movieInfo = moviesData.find((movie) => movie.id === idMovie);
-  const theaterInfo = theaters
-    .filter(theater => theater.showTimes.some(showTime => showTime.movieId === idMovie))
-    .map(theater => ({
-      ...theater,
-      showTimes: theater.showTimes.filter(showTime => showTime.movieId === idMovie)
-    }));
+  const theaterDetails = theaterInfo(idMovie);
   return (
     <section className="flex flex-col min-w-80 md:-top-64 md:left-50">
       <article className="w-80 bg-black mx-auto -mt-40">
@@ -26,7 +22,7 @@ function SeatsCost() {
           * Selecciona el horario de tu preferencia
         </p>
         <div className="space-y-2">
-          {theaterInfo.map((theater) => (
+          {theaterDetails.map((theater) => (
             <div key={theater.id}>
               <input
                 type="radio"
