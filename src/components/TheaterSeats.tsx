@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
+import { useTheater } from "../hooks/useTheater";
+import { useParams } from "react-router";
 
 function TheaterSeats() {
   const rows = ["A", "B", "C", "D", "E", "F", "G", "H"];
   const cols = [11, 11, 13, 13, 17, 17, 17, 13];
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth);
-
+  const { slugId } = useParams();
+  const { theaterInfo, idMovieFunction } = useTheater();
+  const idMovie = idMovieFunction(slugId || "0");
+  const theaterName = theaterInfo(idMovie);
+  //TODO: Cambiar el nombre de la sala en funcion del horario seleccionado
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth);
@@ -16,7 +22,7 @@ function TheaterSeats() {
   }, []);
   return (
     <section className="flex flex-col items-center mb-20 min-w-80 max-w-screen-lg relative flex-1">
-      <h1 className="text-center text-xl font-bold mb-4">Sala 1</h1>
+      <h1 className="text-center text-xl font-bold mb-4">???</h1>
       {/* Figura de pantalla del cine */}
       <section className="relative">
         <div className="movie-screen"></div>
@@ -30,9 +36,8 @@ function TheaterSeats() {
               key={rowIndex}
               className="grid gap-1 mb-1"
               style={{
-                gridTemplateColumns: `repeat(${cols[rowIndex]}, ${
-                  isSmallScreen < 768 ? "1rem" : "2rem"
-                })`,
+                gridTemplateColumns: `repeat(${cols[rowIndex]}, ${isSmallScreen < 768 ? "1rem" : "2rem"
+                  })`,
                 gridAutoRows: `${isSmallScreen < 768 ? "1rem" : "2rem"}`,
               }}
             >
