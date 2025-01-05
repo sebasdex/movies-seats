@@ -29,7 +29,7 @@ function Movies() {
                             {/* Texto al hacer hover */}
                             <div className="opacity-0 absolute inset-0 flex flex-col gap-4 items-center justify-center text-center transition-opacity duration-300 ease-in-out group-hover:opacity-100 p-4 hover:cursor-default">
                                 <p>{movie.description}</p>
-                                <button type="button" className="btn btn-outline btn-error" onClick={() => navigate("/seats")}>Reservar</button>
+                                <button type="button" className="btn btn-outline btn-error" onClick={() => navigate(`/seats/${movie.slug}-${movie.id}`)}>Reservar</button>
                             </div>
                         </div>
                     </article>
