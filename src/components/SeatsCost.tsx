@@ -1,12 +1,16 @@
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { moviesData } from "../data/moviesData";
 function SeatsCost() {
   const navigate = useNavigate();
+  const { slugId } = useParams();
+  const idMovie = parseInt(slugId?.split("-")[slugId.split("-").length - 1] || "0");
+  const movieInfo = moviesData.find((movie) => movie.id === idMovie);
   return (
     <section className="flex flex-col min-w-80 md:-top-64 md:left-50">
       <article className="w-80 bg-black mx-auto -mt-40">
         <img
-          src="https://moviepostermexico.com/cdn/shop/products/inception_ver2_xxlg_1024x1024@2x.jpg?v=1574870710"
-          alt="movie"
+          src={movieInfo?.img}
+          alt={movieInfo?.name}
           className="h-full w-full object-cover object-top aspect-auto"
         />
       </article>
