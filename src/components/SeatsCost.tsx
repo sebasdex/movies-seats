@@ -1,13 +1,36 @@
 import { useNavigate, useParams } from "react-router";
 import { moviesData } from "../data/moviesData";
 import { useTheater } from "../hooks/useTheater";
+import { useEffect, useRef } from "react";
 function SeatsCost() {
   const navigate = useNavigate();
   const { slugId } = useParams();
-  const { theaterInfo, idMovieFunction } = useTheater();
+  const { theaterInfo, idMovieFunction, setTheaterHourInfo, setIsChecked } = useTheater();
   const idMovie = idMovieFunction(slugId || "0");
   const movieInfo = moviesData.find((movie) => movie.id === idMovie);
   const theaterDetails = theaterInfo(idMovie);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (inputRef.current?.checked === undefined || inputRef.current?.checked === false) {
+      setIsChecked(false);
+    }
+  }, [setIsChecked]);
+
+  const handleChange = (id: number) => {
+    if (inputRef.current?.checked === undefined || inputRef.current?.checked === false) {
+      setIsChecked(false);
+    }
+    const infoHourTheater = theaterDetails
+      .filter(theater => theater.id === id && theater.showTimes.some(showTime => showTime.movieId === idMovie))
+      .map(theater => ({
+        ...theater,
+        showTimes: theater.showTimes.filter(showTime => showTime.movieId === idMovie)
+      }))
+    setTheaterHourInfo(infoHourTheater);
+    setIsChecked(true);
+  }
+
   return (
     <section className="flex flex-col min-w-80 md:-top-64 md:left-50">
       <article className="w-80 bg-black mx-auto -mt-40">
@@ -30,7 +53,8 @@ function SeatsCost() {
                 name="schedule"
                 value={theater.id}
                 className="peer hidden"
-              />
+                ref={inputRef}
+                onChange={() => handleChange(theater.id)} />
               <label
                 htmlFor={`${theater.id}`}
                 className="flex items-center justify-between gap-4 p-2 border border-white/30 cursor-pointer transition-all
