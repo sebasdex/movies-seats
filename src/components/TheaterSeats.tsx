@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { useTheater } from "../hooks/useTheater";
-import { useParams } from "react-router";
-
 function TheaterSeats() {
   const rows = ["A", "B", "C", "D", "E", "F", "G", "H"];
   const cols = [11, 11, 13, 13, 17, 17, 17, 13];
+  const { theaterHourInfo, isChecked } = useTheater();
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth);
-  const { slugId } = useParams();
-  const { theaterInfo, idMovieFunction } = useTheater();
-  const idMovie = idMovieFunction(slugId || "0");
-  const theaterName = theaterInfo(idMovie);
-  //TODO: Cambiar el nombre de la sala en funcion del horario seleccionado
+  const theaterName = theaterHourInfo.length
+    ? theaterHourInfo.map(theater => theater.name).join(", ")
+    : "???";
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth);
@@ -22,7 +19,7 @@ function TheaterSeats() {
   }, []);
   return (
     <section className="flex flex-col items-center mb-20 min-w-80 max-w-screen-lg relative flex-1">
-      <h1 className="text-center text-xl font-bold mb-4">???</h1>
+      <h1 className="text-center text-xl font-bold mb-4">{isChecked ? theaterName : "???"}</h1>
       {/* Figura de pantalla del cine */}
       <section className="relative">
         <div className="movie-screen"></div>
@@ -45,6 +42,7 @@ function TheaterSeats() {
                 <button
                   key={`${rowIndex}-${i}`}
                   className="border border-white/30 rounded-lg p-1 text-center text-xs hover:bg-red-700 hover:text-white"
+
                 >
                   {isSmallScreen < 768 ? `` : `${row}${i + 1}`}
                 </button>
