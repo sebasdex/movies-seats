@@ -3,10 +3,10 @@ import { useTheater } from "../hooks/useTheater";
 function TheaterSeats() {
   const rows = ["A", "B", "C", "D", "E", "F", "G", "H"];
   const cols = [11, 11, 13, 13, 17, 17, 17, 13];
-  const { theaterHourInfo, isChecked } = useTheater();
+  const { theaterHourInfo, setTheaterHourInfo, isChecked } = useTheater();
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth);
   const theaterName = theaterHourInfo.length
-    ? theaterHourInfo.map(theater => theater.name).join(", ")
+    ? theaterHourInfo.map((theater) => theater.name).join(", ")
     : "???";
   useEffect(() => {
     const handleResize = () => {
@@ -17,9 +17,27 @@ function TheaterSeats() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const addSeats = (seatsID: string) => {
+    setTheaterHourInfo((prev) =>
+      prev.map((theater) => {
+        return {
+          ...theater,
+          showTimes: theater.showTimes.map((showTime) => {
+            return {
+              ...showTime,
+              occupiedSeats: [...showTime.occupiedSeats, seatsID],
+            };
+          }),
+        };
+      })
+    );
+  };
   return (
     <section className="flex flex-col items-center mb-20 min-w-80 max-w-screen-lg relative flex-1">
-      <h1 className="text-center text-xl font-bold mb-4">{isChecked ? theaterName : "???"}</h1>
+      <h1 className="text-center text-xl font-bold mb-4">
+        {isChecked ? theaterName : "???"}
+      </h1>
       {/* Figura de pantalla del cine */}
       <section className="relative">
         <div className="movie-screen"></div>
@@ -33,8 +51,9 @@ function TheaterSeats() {
               key={rowIndex}
               className="grid gap-1 mb-1"
               style={{
-                gridTemplateColumns: `repeat(${cols[rowIndex]}, ${isSmallScreen < 768 ? "1rem" : "2rem"
-                  })`,
+                gridTemplateColumns: `repeat(${cols[rowIndex]}, ${
+                  isSmallScreen < 768 ? "1rem" : "2rem"
+                })`,
                 gridAutoRows: `${isSmallScreen < 768 ? "1rem" : "2rem"}`,
               }}
             >
@@ -42,7 +61,7 @@ function TheaterSeats() {
                 <button
                   key={`${rowIndex}-${i}`}
                   className="border border-white/30 rounded-lg p-1 text-center text-xs hover:bg-red-700 hover:text-white"
-
+                  onClick={() => addSeats(`${row}${i + 1}`)}
                 >
                   {isSmallScreen < 768 ? `` : `${row}${i + 1}`}
                 </button>
