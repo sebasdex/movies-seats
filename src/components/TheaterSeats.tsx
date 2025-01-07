@@ -5,6 +5,8 @@ function TheaterSeats() {
   const cols = [11, 11, 13, 13, 17, 17, 17, 13];
   const { theaterHourInfo, setTheaterHourInfo, isChecked } = useTheater();
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth);
+
+  const [isActive, setIsActive] = useState<string[]>([]);
   const theaterName = theaterHourInfo.length
     ? theaterHourInfo.map((theater) => theater.name).join(", ")
     : "???";
@@ -19,6 +21,15 @@ function TheaterSeats() {
   }, []);
 
   const addSeats = (seatsID: string) => {
+    if (theaterHourInfo.length > 0) {
+      setIsActive((prev) => {
+        if (prev.includes(seatsID)) {
+          return prev.filter((id) => id !== seatsID);
+        } else {
+          return [...prev, seatsID];
+        }
+      });
+    }
     setTheaterHourInfo((prev) =>
       prev.map((theater) => {
         return {
@@ -26,7 +37,7 @@ function TheaterSeats() {
           showTimes: theater.showTimes.map((showTime) => {
             return {
               ...showTime,
-              occupiedSeats: [...showTime.occupiedSeats, seatsID],
+              occupiedSeats: isActive,
             };
           }),
         };
@@ -60,7 +71,12 @@ function TheaterSeats() {
               {Array.from({ length: cols[rowIndex] }, (_, i) => (
                 <button
                   key={`${rowIndex}-${i}`}
-                  className="border border-white/30 rounded-lg p-1 text-center text-xs hover:bg-red-700 hover:text-white"
+                  className={`border border-white/30 rounded-lg p-1 text-center text-xs hover:bg-red-700
+                   hover:text-white ${
+                     isActive.includes(`${row}${i + 1}`)
+                       ? "bg-red-700 text-white"
+                       : ""
+                   }`}
                   onClick={() => addSeats(`${row}${i + 1}`)}
                 >
                   {isSmallScreen < 768 ? `` : `${row}${i + 1}`}
