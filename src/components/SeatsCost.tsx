@@ -1,47 +1,42 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { moviesData } from "../data/moviesData";
 import { useTheater } from "../hooks/useTheater";
-import { useEffect, useRef } from "react";
+
 function SeatsCost() {
   const navigate = useNavigate();
   const { slugId } = useParams();
-  const { theaterInfo, idMovieFunction, setTheaterHourInfo, setIsChecked } =
-    useTheater();
+  const {
+    theaterInfo,
+    idMovieFunction,
+    setSelectedTheaterArray,
+    setSelectedTheater,
+    setSelectedShowTime,
+  } = useTheater();
+
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]); // Local state for selected seats
+
   const idMovie = idMovieFunction(slugId || "0");
-  const movieInfo = moviesData.find((movie) => movie.id === idMovie);
   const theaterDetails = theaterInfo(idMovie);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const movieInfo = moviesData.find((movie) => movie.id === idMovie);
 
+  // Reset states when movie changes (slugId)
   useEffect(() => {
-    if (
-      inputRef.current?.checked === undefined ||
-      inputRef.current?.checked === false
-    ) {
-      setIsChecked(false);
-    }
-  }, [setIsChecked]);
+    setSelectedTheaterArray([]);
+    setSelectedTheater(0);
+    setSelectedShowTime(null);
+    setSelectedSeats([]); // Clear seats when changing movie
+  }, [slugId, setSelectedTheaterArray, setSelectedTheater, setSelectedShowTime]);
 
-  const handleChange = (id: number) => {
-    if (
-      inputRef.current?.checked === undefined ||
-      inputRef.current?.checked === false
-    ) {
-      setIsChecked(false);
+  // Function to handle schedule selection
+  const handleSelectHour = (id: number, indexShowTime: number) => {
+    const theater = theaterInfo(idMovie).filter((theater) => theater.id === id);
+    if (theater.length > 0) {
+      setSelectedTheaterArray(theater);
+      setSelectedTheater(id);
+      setSelectedShowTime(indexShowTime);
+      setSelectedSeats([]); // Clear selected seats when changing schedule
     }
-    const infoHourTheater = theaterDetails
-      .filter(
-        (theater) =>
-          theater.id === id &&
-          theater.showTimes.some((showTime) => showTime.movieId === idMovie)
-      )
-      .map((theater) => ({
-        ...theater,
-        showTimes: theater.showTimes.filter(
-          (showTime) => showTime.movieId === idMovie
-        ),
-      }));
-    setTheaterHourInfo(infoHourTheater);
-    setIsChecked(true);
   };
 
   return (
@@ -58,32 +53,37 @@ function SeatsCost() {
           * Selecciona el horario de tu preferencia
         </p>
         <div className="space-y-2">
-          {theaterDetails.map((theater) => (
-            <div key={theater.id}>
-              <input
-                type="radio"
-                id={`${theater.id}`}
-                name="schedule"
-                value={theater.id}
-                className="peer hidden"
-                ref={inputRef}
-                onChange={() => handleChange(theater.id)}
-              />
-              <label
-                htmlFor={`${theater.id}`}
-                className="flex items-center justify-between gap-4 p-2 border border-white/30 cursor-pointer transition-all
+          {theaterDetails.map((theater) =>
+            theater.showTimes.map((showTime, index) => (
+              <div key={`${theater.id}-${index}`}>
+                <input
+                  type="radio"
+                  id={`${theater.id}-${index}`}
+                  name="schedule"
+                  value={`${theater.id}-${index}`}
+                  className="peer hidden"
+                  onChange={() => handleSelectHour(theater.id, index)}
+                />
+                <label
+                  htmlFor={`${theater.id}-${index}`}
+                  className="flex items-center justify-between gap-4 p-2 border border-white/30 cursor-pointer transition-all
                      peer-checked:bg-red-700 peer-checked:text-white hover:bg-gray-600 hover:text-white"
-              >
-                <p>{theater.showTimes[0].time}</p>
-                <p>${theater.showTimes[0].price}</p>
-              </label>
-            </div>
-          ))}
+                >
+                  <p>{showTime.time}</p>
+                  <p>${showTime.price}</p>
+                </label>
+              </div>
+            ))
+          )}
         </div>
 
         <div className="flex items-center justify-between gap-4 p-2 border border-white/30">
           <p className="flex-1">Asiento(s)</p>
-          <p className="text-gray-400">Aún sin elegir</p>
+          <p className="text-gray-400">
+            {selectedSeats.length > 0
+              ? selectedSeats.join(", ")
+              : "Sin asignar"}
+          </p>
         </div>
         <div className="flex justify-end">
           <p className="p-2 text-white/30">

@@ -1,15 +1,36 @@
 import { useEffect, useState } from "react";
 import { useTheater } from "../hooks/useTheater";
+
 function TheaterSeats() {
   const rows = ["A", "B", "C", "D", "E", "F", "G", "H"];
   const cols = [11, 11, 13, 13, 17, 17, 17, 13];
-  const { theaterHourInfo, setTheaterHourInfo, isChecked } = useTheater();
+
+  const {
+    selectedTheaterArray,
+    selectedShowTime,
+    setTheatersArray,
+  } = useTheater();
+
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const [localOccupiedSeats, setLocalOccupiedSeats] = useState<string[]>([]);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth);
 
-  const [isActive, setIsActive] = useState<string[]>([]);
-  const theaterName = theaterHourInfo.length
-    ? theaterHourInfo.map((theater) => theater.name).join(", ")
-    : "???";
+  // Sincronizar los asientos ocupados con el horario seleccionado
+  useEffect(() => {
+    if (
+      selectedTheaterArray.length > 0 &&
+      selectedShowTime !== null &&
+      selectedTheaterArray[0]?.showTimes[selectedShowTime]
+    ) {
+      setLocalOccupiedSeats(
+        selectedTheaterArray[0].showTimes[selectedShowTime].occupiedSeats || []
+      );
+    } else {
+      setLocalOccupiedSeats([]);
+    }
+  }, [selectedTheaterArray, selectedShowTime]);
+
+  // Manejar el tamaño de pantalla
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth);
@@ -20,72 +41,125 @@ function TheaterSeats() {
     };
   }, []);
 
-  const addSeats = (seatsID: string) => {
-    if (theaterHourInfo.length > 0) {
-      setIsActive((prev) => {
-        if (prev.includes(seatsID)) {
-          return prev.filter((id) => id !== seatsID);
-        } else {
-          return [...prev, seatsID];
-        }
-      });
-    }
-    setTheaterHourInfo((prev) =>
-      prev.map((theater) => {
-        return {
-          ...theater,
-          showTimes: theater.showTimes.map((showTime) => {
-            return {
-              ...showTime,
-              occupiedSeats: isActive,
-            };
-          }),
-        };
-      })
+  // Limpiar asientos seleccionados al cambiar de horario o sala
+  useEffect(() => {
+    setSelectedSeats([]);
+  }, [selectedShowTime, selectedTheaterArray]);
+
+  const toggleSeat = (seat: string) => {
+    if (selectedShowTime === null) return;
+
+    const isAlreadySelected = selectedSeats.includes(seat);
+
+    setSelectedSeats((prev) =>
+      isAlreadySelected
+        ? prev.filter((s) => s !== seat)
+        : [...prev, seat]
     );
   };
+
+  const confirmSeats = () => {
+    const theaterId = selectedTheaterArray[0]?.id;
+    const movieId = selectedTheaterArray[0]?.showTimes[selectedShowTime || 0]?.movieId;
+
+    if (theaterId === undefined || selectedShowTime === null || movieId === undefined) return;
+
+    setTheatersArray((prev) =>
+      prev.map((theater) => {
+        if (theater.id === theaterId) {
+          return {
+            ...theater,
+            showTimes: theater.showTimes.map((showTime) => {
+              if (showTime.movieId === movieId) {
+                const newOccupiedSeats = [
+                  ...new Set([...showTime.occupiedSeats, ...selectedSeats]),
+                ];
+                setLocalOccupiedSeats(newOccupiedSeats);
+                return {
+                  ...showTime,
+                  occupiedSeats: newOccupiedSeats,
+                };
+              }
+              return showTime;
+            }),
+          };
+        }
+        return theater;
+      })
+    );
+
+    setSelectedSeats([]);
+  };
+
+  const theaterName =
+    selectedTheaterArray.length > 0 &&
+      selectedShowTime !== null
+      ? selectedTheaterArray[0].name
+      : "???";
+
   return (
     <section className="flex flex-col items-center mb-20 min-w-80 max-w-screen-lg relative flex-1">
-      <h1 className="text-center text-xl font-bold mb-4">
-        {isChecked ? theaterName : "???"}
-      </h1>
-      {/* Figura de pantalla del cine */}
+      <h1 className="text-center text-xl font-bold mb-4">{theaterName}</h1>
+
       <section className="relative">
         <div className="movie-screen"></div>
         <div className="movie-shadow"></div>
       </section>
-      {/* Fila de asientos */}
-      <section className="w-ful -mt-10 md:mt-0">
+
+      <section className="w-full -mt-10 md:mt-0">
         <div className="w-full mx-auto flex flex-col items-center justify-center">
           {rows.map((row, rowIndex) => (
             <div
               key={rowIndex}
               className="grid gap-1 mb-1"
               style={{
-                gridTemplateColumns: `repeat(${cols[rowIndex]}, ${
-                  isSmallScreen < 768 ? "1rem" : "2rem"
-                })`,
+                gridTemplateColumns: `repeat(${cols[rowIndex]}, ${isSmallScreen < 768 ? "1rem" : "2rem"
+                  })`,
                 gridAutoRows: `${isSmallScreen < 768 ? "1rem" : "2rem"}`,
               }}
             >
-              {Array.from({ length: cols[rowIndex] }, (_, i) => (
-                <button
-                  key={`${rowIndex}-${i}`}
-                  className={`border border-white/30 rounded-lg p-1 text-center text-xs hover:bg-red-700
-                   hover:text-white ${
-                     isActive.includes(`${row}${i + 1}`)
-                       ? "bg-red-700 text-white"
-                       : ""
-                   }`}
-                  onClick={() => addSeats(`${row}${i + 1}`)}
-                >
-                  {isSmallScreen < 768 ? `` : `${row}${i + 1}`}
-                </button>
-              ))}
+              {Array.from({ length: cols[rowIndex] }, (_, i) => {
+                const seatId = `${row}${i + 1}`;
+                const isOccupied = localOccupiedSeats.includes(seatId);
+                const isSelected = selectedSeats.includes(seatId);
+
+                return (
+                  <button
+                    key={`${rowIndex}-${i}`}
+                    onClick={() => toggleSeat(seatId)}
+                    disabled={selectedShowTime === null || isOccupied}
+                    className={`border rounded-lg p-1 text-center text-xs ${selectedShowTime === null
+                      ? "bg-gray-300 text-gray-400 cursor-not-allowed"
+                      : isOccupied
+                        ? "bg-red-700 text-white cursor-not-allowed"
+                        : isSelected
+                          ? "bg-red-700 text-white"
+                          : "bg-gray-300 text-black hover:bg-red-500"
+                      }`}
+                  >
+                    {isSmallScreen < 768 ? "" : seatId}
+                  </button>
+                );
+              })}
             </div>
           ))}
         </div>
       </section>
+
+      <div className="flex items-center justify-between gap-4 p-2 border border-white/30 mt-4">
+        <p className="flex-1">Asientos seleccionados</p>
+        <p className="text-gray-400">
+          {selectedSeats.length > 0 ? selectedSeats.join(", ") : "Sin asignar"}
+        </p>
+      </div>
+
+      <button
+        onClick={confirmSeats}
+        className="btn btn-outline btn-success mt-4"
+        disabled={selectedSeats.length === 0 || selectedShowTime === null}
+      >
+        Confirmar Asientos
+      </button>
     </section>
   );
 }

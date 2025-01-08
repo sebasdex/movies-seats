@@ -5,9 +5,11 @@ import { Theater, TheaterHourInfo } from "../types/theater";
 export const TheaterProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [theaterHourInfo, setTheaterHourInfo] = useState<TheaterHourInfo[]>([]);
+  const [selectedTheaterArray, setSelectedTheaterArray] = useState<TheaterHourInfo[]>([]);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [theatersArray, setTheatersArray] = useState<Theater[]>(theaters);
+  const [selectedTheater, setSelectedTheater] = useState<number>(0);
+  const [selectedShowTime, setSelectedShowTime] = useState<number | null>(null);
 
   const idMovieFunction = (slugId: string) => {
     return parseInt(slugId?.split("-")[slugId.split("-").length - 1] || "0");
@@ -30,12 +32,16 @@ export const TheaterProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         theaterInfo,
         idMovieFunction,
-        setTheaterHourInfo,
-        theaterHourInfo,
+        setSelectedTheaterArray,
+        selectedTheaterArray,
         isChecked,
         setIsChecked,
         theatersArray,
         setTheatersArray,
+        selectedTheater,
+        setSelectedTheater,
+        selectedShowTime,
+        setSelectedShowTime,
       }}
     >
       {children}
