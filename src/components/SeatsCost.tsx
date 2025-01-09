@@ -25,25 +25,25 @@ function SeatsCost() {
   const theaterDetails = theaterInfo(idMovie);
   const movieInfo = moviesData.find((movie) => movie.id === idMovie);
 
-  // Reset states when movie changes (slugId)
+  const totalCost = selectedTheaterArray
+    .flatMap((theater) => theater.showTimes
+      .reduce((acc, showTime) => acc + (showTime.price * selectedSeats.length), 0).toFixed(2)).toString() || "0.00";
+
   useEffect(() => {
     setSelectedTheaterArray([]);
     setSelectedTheater(0);
     setSelectedShowTime(null);
   }, [slugId, setSelectedTheaterArray, setSelectedTheater, setSelectedShowTime]);
 
-  // Function to handle schedule selection
   const handleSelectHour = (id: number, indexShowTime: number) => {
     const theater = theaterInfo(idMovie).filter((theater) => theater.id === id);
     if (theater.length > 0) {
       setSelectedTheaterArray(theater);
       setSelectedTheater(id);
       setSelectedShowTime(indexShowTime);
-      setSelectedSeats([]); // Clear selected seats when changing schedule
     }
   };
 
-  // Sincronizar los asientos ocupados con el horario seleccionado
   useEffect(() => {
     if (
       selectedTheaterArray.length > 0 &&
@@ -138,7 +138,7 @@ function SeatsCost() {
         <div className="flex justify-end">
           <p className="p-2 text-white/30">
             Total:
-            <span className="text-white ml-2 text-xl">$0.00</span>
+            <span className="text-white ml-2 text-xl">${totalCost}</span>
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2 mt-8">
