@@ -1,50 +1,59 @@
-# React + TypeScript + Vite
+# Movie Booking App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción
 
-Currently, two official plugins are available:
+**Movie Booking App** es una aplicación web que permite a los usuarios explorar películas disponibles, seleccionar horarios, elegir asientos y realizar reservas en salas de cine. La aplicación calcula automáticamente el precio total basado en los asientos seleccionados.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Características principales
+- Lista de películas con detalles básicos.
+- Selección de horarios y ubicaciones para las funciones.
+- Visualización y selección de asientos disponibles.
+- Cálculo automático del precio total según los asientos seleccionados.
 
-## Expanding the ESLint configuration
+## Tecnologías utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **React**
+- **TypeScript**
+- **Context API**
+- **pnpm**
+- **DaisyUI**
+- **Tailwind CSS**
 
-- Configure the top-level `parserOptions` property like this:
+## Requisitos previos
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+Asegúrate de tener instalados los siguientes componentes antes de iniciar el proyecto:
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- Node.js (v16 o superior)
+- pnpm (gestor de paquetes)
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Instalación
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+Sigue estos pasos para configurar el proyecto en tu máquina local:
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/sebasdex/movies-seats.git
+   ```
+
+2. Navega al directorio del proyecto:
+   ```bash
+   cd movies-seats
+   ```
+
+3. Instala las dependencias utilizando pnpm:
+   ```bash
+   pnpm install
+   ```
+
+## Uso
+
+1. Inicia la aplicación en modo de desarrollo:
+   ```bash
+   pnpm run dev
+   ```
+
+2. Abre tu navegador y ve a [http://localhost:5173](http://localhost:5173) para ver la aplicación en acción.
+
+##
+
+
