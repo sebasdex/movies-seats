@@ -58,6 +58,11 @@ function SeatsCost() {
     }
   }, [selectedTheaterArray, selectedShowTime, setLocalOccupiedSeats]);
 
+  useEffect(() => {
+    setSelectedSeats([]);
+  }, [selectedShowTime, selectedTheaterArray, setSelectedSeats]);
+
+
   const confirmSeats = () => {
     const theaterId = selectedTheaterArray[0]?.id;
     const movieId = selectedTheaterArray[0]?.showTimes[selectedShowTime || 0]?.movieId;
