@@ -10,6 +10,8 @@ export const TheaterProvider: React.FC<{ children: React.ReactNode }> = ({
   const [theatersArray, setTheatersArray] = useState<Theater[]>(theaters);
   const [selectedTheater, setSelectedTheater] = useState<number>(0);
   const [selectedShowTime, setSelectedShowTime] = useState<number | null>(null);
+  const [localOccupiedSeats, setLocalOccupiedSeats] = useState<string[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
 
   const idMovieFunction = (slugId: string) => {
     return parseInt(slugId?.split("-")[slugId.split("-").length - 1] || "0");
@@ -42,6 +44,10 @@ export const TheaterProvider: React.FC<{ children: React.ReactNode }> = ({
         setSelectedTheater,
         selectedShowTime,
         setSelectedShowTime,
+        localOccupiedSeats,
+        setLocalOccupiedSeats,
+        selectedSeats,
+        setSelectedSeats,
       }}
     >
       {children}

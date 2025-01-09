@@ -8,27 +8,15 @@ function TheaterSeats() {
   const {
     selectedTheaterArray,
     selectedShowTime,
-    setTheatersArray,
+    localOccupiedSeats,
+    setSelectedSeats,
+    selectedSeats,
   } = useTheater();
 
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  const [localOccupiedSeats, setLocalOccupiedSeats] = useState<string[]>([]);
+
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth);
 
-  // Sincronizar los asientos ocupados con el horario seleccionado
-  useEffect(() => {
-    if (
-      selectedTheaterArray.length > 0 &&
-      selectedShowTime !== null &&
-      selectedTheaterArray[0]?.showTimes[selectedShowTime]
-    ) {
-      setLocalOccupiedSeats(
-        selectedTheaterArray[0].showTimes[selectedShowTime].occupiedSeats || []
-      );
-    } else {
-      setLocalOccupiedSeats([]);
-    }
-  }, [selectedTheaterArray, selectedShowTime]);
+
 
   // Manejar el tamaño de pantalla
   useEffect(() => {
@@ -40,11 +28,6 @@ function TheaterSeats() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  // Limpiar asientos seleccionados al cambiar de horario o sala
-  useEffect(() => {
-    setSelectedSeats([]);
-  }, [selectedShowTime, selectedTheaterArray]);
 
   const toggleSeat = (seat: string) => {
     if (selectedShowTime === null) return;
@@ -58,38 +41,6 @@ function TheaterSeats() {
     );
   };
 
-  const confirmSeats = () => {
-    const theaterId = selectedTheaterArray[0]?.id;
-    const movieId = selectedTheaterArray[0]?.showTimes[selectedShowTime || 0]?.movieId;
-
-    if (theaterId === undefined || selectedShowTime === null || movieId === undefined) return;
-
-    setTheatersArray((prev) =>
-      prev.map((theater) => {
-        if (theater.id === theaterId) {
-          return {
-            ...theater,
-            showTimes: theater.showTimes.map((showTime) => {
-              if (showTime.movieId === movieId) {
-                const newOccupiedSeats = [
-                  ...new Set([...showTime.occupiedSeats, ...selectedSeats]),
-                ];
-                setLocalOccupiedSeats(newOccupiedSeats);
-                return {
-                  ...showTime,
-                  occupiedSeats: newOccupiedSeats,
-                };
-              }
-              return showTime;
-            }),
-          };
-        }
-        return theater;
-      })
-    );
-
-    setSelectedSeats([]);
-  };
 
   const theaterName =
     selectedTheaterArray.length > 0 &&
@@ -145,21 +96,6 @@ function TheaterSeats() {
           ))}
         </div>
       </section>
-
-      <div className="flex items-center justify-between gap-4 p-2 border border-white/30 mt-4">
-        <p className="flex-1">Asientos seleccionados</p>
-        <p className="text-gray-400">
-          {selectedSeats.length > 0 ? selectedSeats.join(", ") : "Sin asignar"}
-        </p>
-      </div>
-
-      <button
-        onClick={confirmSeats}
-        className="btn btn-outline btn-success mt-4"
-        disabled={selectedSeats.length === 0 || selectedShowTime === null}
-      >
-        Confirmar Asientos
-      </button>
     </section>
   );
 }

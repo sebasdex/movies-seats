@@ -14,6 +14,10 @@ type TheaterContextType = {
   setSelectedTheater: React.Dispatch<React.SetStateAction<number>>;
   selectedShowTime: number | null;
   setSelectedShowTime: React.Dispatch<React.SetStateAction<number | null>>;
+  localOccupiedSeats: string[];
+  setLocalOccupiedSeats: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedSeats: string[];
+  setSelectedSeats: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 const TheaterContext = createContext<TheaterContextType | undefined>(undefined);

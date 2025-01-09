@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { moviesData } from "../data/moviesData";
 import { useTheater } from "../hooks/useTheater";
@@ -12,9 +12,14 @@ function SeatsCost() {
     setSelectedTheaterArray,
     setSelectedTheater,
     setSelectedShowTime,
+    setTheatersArray,
+    selectedTheaterArray,
+    selectedShowTime,
+    setLocalOccupiedSeats,
+    setSelectedSeats,
+    selectedSeats,
   } = useTheater();
 
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]); // Local state for selected seats
 
   const idMovie = idMovieFunction(slugId || "0");
   const theaterDetails = theaterInfo(idMovie);
@@ -25,7 +30,6 @@ function SeatsCost() {
     setSelectedTheaterArray([]);
     setSelectedTheater(0);
     setSelectedShowTime(null);
-    setSelectedSeats([]); // Clear seats when changing movie
   }, [slugId, setSelectedTheaterArray, setSelectedTheater, setSelectedShowTime]);
 
   // Function to handle schedule selection
@@ -37,6 +41,54 @@ function SeatsCost() {
       setSelectedShowTime(indexShowTime);
       setSelectedSeats([]); // Clear selected seats when changing schedule
     }
+  };
+
+  // Sincronizar los asientos ocupados con el horario seleccionado
+  useEffect(() => {
+    if (
+      selectedTheaterArray.length > 0 &&
+      selectedShowTime !== null &&
+      selectedTheaterArray[0]?.showTimes[selectedShowTime]
+    ) {
+      setLocalOccupiedSeats(
+        selectedTheaterArray[0].showTimes[selectedShowTime].occupiedSeats || []
+      );
+    } else {
+      setLocalOccupiedSeats([]);
+    }
+  }, [selectedTheaterArray, selectedShowTime, setLocalOccupiedSeats]);
+
+  const confirmSeats = () => {
+    const theaterId = selectedTheaterArray[0]?.id;
+    const movieId = selectedTheaterArray[0]?.showTimes[selectedShowTime || 0]?.movieId;
+
+    if (theaterId === undefined || selectedShowTime === null || movieId === undefined) return;
+
+    setTheatersArray((prev) =>
+      prev.map((theater) => {
+        if (theater.id === theaterId) {
+          return {
+            ...theater,
+            showTimes: theater.showTimes.map((showTime) => {
+              if (showTime.movieId === movieId) {
+                const newOccupiedSeats = [
+                  ...new Set([...showTime.occupiedSeats, ...selectedSeats]),
+                ];
+                setLocalOccupiedSeats(newOccupiedSeats);
+                return {
+                  ...showTime,
+                  occupiedSeats: newOccupiedSeats,
+                };
+              }
+              return showTime;
+            }),
+          };
+        }
+        return theater;
+      })
+    );
+
+    setSelectedSeats([]);
   };
 
   return (
@@ -79,10 +131,8 @@ function SeatsCost() {
 
         <div className="flex items-center justify-between gap-4 p-2 border border-white/30">
           <p className="flex-1">Asiento(s)</p>
-          <p className="text-gray-400">
-            {selectedSeats.length > 0
-              ? selectedSeats.join(", ")
-              : "Sin asignar"}
+          <p className="text-gray-400 max-w-40">
+            {selectedSeats.length > 0 ? selectedSeats.join(", ") : "Sin asignar"}
           </p>
         </div>
         <div className="flex justify-end">
@@ -98,7 +148,18 @@ function SeatsCost() {
           >
             Cancelar
           </button>
-          <button className="btn btn-outline btn-error">Reservar</button>
+          <button
+            className={` ${selectedSeats.length === 0 || selectedShowTime === null
+              ? "opacity-50 cursor-not-allowed bg-transparent border border-red-400 rounded-lg text-gray-500"
+              : "border border-red-400 text-red-400 rounded-lg hover:bg-red-500 hover:text-black"
+              }`}
+            onClick={() => confirmSeats()}
+            disabled={selectedSeats.length === 0 || selectedShowTime === null}
+          >
+            Reservar
+          </button>
+
+
         </div>
       </article>
     </section>
