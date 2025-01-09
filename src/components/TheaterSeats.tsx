@@ -13,12 +13,8 @@ function TheaterSeats() {
     selectedSeats,
   } = useTheater();
 
-
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth);
 
-
-
-  // Manejar el tamaño de pantalla
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth);
@@ -41,7 +37,6 @@ function TheaterSeats() {
     );
   };
 
-
   const theaterName =
     selectedTheaterArray.length > 0 &&
       selectedShowTime !== null
@@ -57,7 +52,7 @@ function TheaterSeats() {
         <div className="movie-shadow"></div>
       </section>
 
-      <section className="w-full -mt-10 md:mt-0">
+      <section className="w-full">
         <div className="w-full mx-auto flex flex-col items-center justify-center">
           {rows.map((row, rowIndex) => (
             <div
